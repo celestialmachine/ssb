@@ -12,10 +12,10 @@ namespace ssb_api.Models
 
         public string? Description { get; set; } = null;
 
-        public occurrence Occurence { get; set; }
+        public occurrence Occurrence { get; set; }
 
         [Range(0, 31, ErrorMessage = "Please enter a day of the week or day of the month.")]
-        public int? OccurenceDay { get; set; } = null;
+        public int? OccurrenceDay { get; set; } = null;
 
         [Range(-9999999999999999.99, 9999999999999999.99)]
         [Precision(18,2)]

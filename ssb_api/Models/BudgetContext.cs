@@ -18,8 +18,8 @@ namespace ssb_api.Models
                     Id = 1,
                     Name = "Cell Phone",
                     Description = "T-Mobile Family Plan",
-                    Occurence = occurrence.Monthly,
-                    OccurenceDay = 15,
+                    Occurrence = occurrence.Monthly,
+                    OccurrenceDay = 15,
                     Amount = 100m
                 }
             ); 
