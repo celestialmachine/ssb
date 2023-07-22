@@ -92,7 +92,7 @@ namespace ssb_api.Controllers
             _context.BudgetItems.Add(budgetItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBudgetItem", new { id = budgetItem.Id }, budgetItem);
+            return CreatedAtAction(nameof(GetBudgetItem), new { id = budgetItem.Id }, budgetItem);
         }
 
         // DELETE: api/BudgetItems/5
