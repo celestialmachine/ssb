@@ -15,6 +15,15 @@ builder.Services.AddDbContext<BudgetContext>(opt => opt.UseSqlServer(builder.Con
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//TODO remove when API is in production
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularOrigins", builder =>
+    {
+        builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,7 +34,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
 app.UseHttpsRedirection();
+
+//TODO remove when API is in productions
+app.UseCors("AllowAngularOrigins");
 
 app.UseAuthorization();
 
