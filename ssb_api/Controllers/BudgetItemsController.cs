@@ -33,7 +33,7 @@ namespace ssb_api.Controllers
 
         // GET: api/BudgetItems/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<BudgetItem>> GetBudgetItem(long id)
+        public async Task<ActionResult<BudgetItem>> GetBudgetItem(int id)
         {
           if (_context.BudgetItems == null)
           {
@@ -52,7 +52,7 @@ namespace ssb_api.Controllers
         // PUT: api/BudgetItems/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBudgetItem(long id, BudgetItem budgetItem)
+        public async Task<IActionResult> PutBudgetItem(int id, BudgetItem budgetItem)
         {
             if (id != budgetItem.Id)
             {
@@ -97,7 +97,7 @@ namespace ssb_api.Controllers
 
         // DELETE: api/BudgetItems/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBudgetItem(long id)
+        public async Task<IActionResult> DeleteBudgetItem(int id)
         {
             if (_context.BudgetItems == null)
             {
@@ -115,7 +115,7 @@ namespace ssb_api.Controllers
             return NoContent();
         }
 
-        private bool BudgetItemExists(long id)
+        private bool BudgetItemExists(int id)
         {
             return (_context.BudgetItems?.Any(e => e.Id == id)).GetValueOrDefault();
         }
