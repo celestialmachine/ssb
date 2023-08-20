@@ -19,7 +19,7 @@ namespace ssb_api.Controllers
         {
             _context = context;
         }
-
+        // TODO: Delete unused methods
         // GET: api/BudgetEvents
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BudgetEvent>>> GetBudgetEvents()
@@ -47,6 +47,28 @@ namespace ssb_api.Controllers
             }
 
             return budgetEvent;
+        }
+
+        // GET: api/BudgetEvents/ByItem/5
+        [HttpGet("ByItem/{id}")]
+        public async Task<ActionResult<IEnumerable<BudgetEvent>>> GetBudgetEventByItem(int id)
+        {
+
+            if (_context.BudgetEvents == null)
+            {
+                return NotFound();
+            }
+
+            IQueryable<BudgetEvent> query = _context.BudgetEvents.Where(ev => ev.ItemId == id);
+
+            //var budgetEvents = await _context.BudgetEvents.FindAsync(id);
+
+            if (query == null)
+            {
+                return NotFound();
+            }
+
+            return await query.ToListAsync();
         }
 
         // PUT: api/BudgetEvents/5

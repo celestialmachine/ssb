@@ -12,14 +12,14 @@ using ssb_api.Models;
 namespace ssb_api.Migrations
 {
     [DbContext(typeof(BudgetContext))]
-    [Migration("20230819233412_Event")]
-    partial class Event
+    [Migration("20230820013038_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.20")
+                .HasAnnotation("ProductVersion", "6.0.21")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -36,11 +36,11 @@ namespace ssb_api.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("BudgetItemId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("datetime2");
@@ -48,15 +48,19 @@ namespace ssb_api.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("ItemId")
+                    b.Property<int>("ItemId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BudgetItemId");
+                    b.HasIndex("ItemId");
 
                     b.ToTable("BudgetEvents");
 
@@ -65,19 +69,23 @@ namespace ssb_api.Migrations
                         {
                             Id = 1,
                             Balance = 100m,
-                            Date = new DateTime(2023, 9, 16, 16, 34, 12, 568, DateTimeKind.Local).AddTicks(1308),
-                            DueDate = new DateTime(2023, 9, 16, 16, 34, 12, 568, DateTimeKind.Local).AddTicks(1322),
+                            Date = new DateTime(2023, 9, 16, 18, 30, 38, 433, DateTimeKind.Local).AddTicks(1428),
+                            Description = "T-Mobile Family Plan",
+                            DueDate = new DateTime(2023, 9, 16, 18, 30, 38, 433, DateTimeKind.Local).AddTicks(1441),
                             IsPaid = false,
-                            ItemId = 1,
+                            ItemId = 4,
+                            Name = "Cell Phone - September 2023",
                             Note = "Cell phone event note"
                         },
                         new
                         {
                             Id = 2,
                             Balance = 200m,
-                            Date = new DateTime(2023, 9, 18, 16, 34, 12, 568, DateTimeKind.Local).AddTicks(1323),
-                            DueDate = new DateTime(2023, 9, 18, 16, 34, 12, 568, DateTimeKind.Local).AddTicks(1324),
+                            Date = new DateTime(2023, 9, 18, 18, 30, 38, 433, DateTimeKind.Local).AddTicks(1443),
+                            DueDate = new DateTime(2023, 9, 18, 18, 30, 38, 433, DateTimeKind.Local).AddTicks(1444),
                             IsPaid = false,
+                            ItemId = 1,
+                            Name = "School books Fall 23",
                             Note = "This event has no item reference"
                         });
                 });
@@ -115,6 +123,31 @@ namespace ssb_api.Migrations
                         new
                         {
                             Id = 1,
+                            Amount = 0m,
+                            Name = "Utility",
+                            Occurrence = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Amount = 1500m,
+                            Description = "Level 9000 Apartments",
+                            Name = "Rent",
+                            Occurrence = 1,
+                            OccurrenceDay = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Amount = 40m,
+                            Description = "Chell or Chevron",
+                            Name = "Gas",
+                            Occurrence = 2,
+                            OccurrenceDay = 4
+                        },
+                        new
+                        {
+                            Id = 4,
                             Amount = 100m,
                             Description = "T-Mobile Family Plan",
                             Name = "Cell Phone",
@@ -126,10 +159,17 @@ namespace ssb_api.Migrations
             modelBuilder.Entity("ssb_api.Models.BudgetEvent", b =>
                 {
                     b.HasOne("ssb_api.Models.BudgetItem", "BudgetItem")
-                        .WithMany()
-                        .HasForeignKey("BudgetItemId");
+                        .WithMany("Events")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("BudgetItem");
+                });
+
+            modelBuilder.Entity("ssb_api.Models.BudgetItem", b =>
+                {
+                    b.Navigation("Events");
                 });
 #pragma warning restore 612, 618
         }
