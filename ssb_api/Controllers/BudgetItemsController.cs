@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ssb_api.Models;
+using ssb_api.Services;
 
 namespace ssb_api.Controllers
 {
@@ -15,7 +16,7 @@ namespace ssb_api.Controllers
     {
         private readonly BudgetContext _context;
 
-        public BudgetItemsController(BudgetContext context)
+        public BudgetItemsController(BudgetContext context, EventService eventService)
         {
             _context = context;
         }
@@ -89,9 +90,12 @@ namespace ssb_api.Controllers
           {
               return Problem("Entity set 'BudgetContext.BudgetItems'  is null.");
           }
+            
+            //item added to db context. 'Add' tracks changes made to budget item, including adding the newly created Id.
             _context.BudgetItems.Add(budgetItem);
+            //changes made to db context are saved to the database
             await _context.SaveChangesAsync();
-
+            //returns newly created item
             return CreatedAtAction(nameof(GetBudgetItem), new { id = budgetItem.Id }, budgetItem);
         }
 

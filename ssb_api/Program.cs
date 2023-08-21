@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ssb_api.Models;
+using ssb_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,9 @@ builder.Services.AddControllers();
 
 //Add EF Core DI
 builder.Services.AddDbContext<BudgetContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("BudgetContext")));
+
+//Add DI for event service
+builder.Services.AddScoped<EventService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
