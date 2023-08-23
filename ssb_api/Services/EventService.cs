@@ -12,7 +12,7 @@ namespace ssb_api.Services
             _context = context;
         }
 
-        public void genereate(BudgetItem item)
+        public async Task genereateAsync(BudgetItem item)
         {
             var events = new List<BudgetEvent>();
             switch (item.Occurrence)
@@ -30,16 +30,12 @@ namespace ssb_api.Services
                     //add event for current week plus 60 days
                     if (item.OccurrenceDay != null)
                     {
-                        DateTime startDate = getNextWeekday(DateTime.Now, (int)item.OccurrenceDay);
                         int daysToAdd = (int)item.OccurrenceDay;
-                        //add first event
-                        events.Add(createEvent(startDate, item));
-                        //add remaining events no further than scope
-                        do
+                        DateTime startDate = getNextWeekday(DateTime.Now, daysToAdd);
+                        for (int i = 0; i < BudgetScope; i+= 7)
                         {
-                            events.Add(createEvent(startDate.AddDays(daysToAdd), item));
-                            daysToAdd += 7;
-                        } while (daysToAdd < BudgetScope);
+                            events.Add(createEvent(startDate.AddDays(i), item));
+                        }
                     }
                     else
                     {
@@ -51,16 +47,12 @@ namespace ssb_api.Services
                     //add event for current week plus 60 days
                     if (item.OccurrenceDay != null)
                     {
-                        DateTime startDate = getNextWeekday(DateTime.Now, (int)item.OccurrenceDay);
                         int daysToAdd = (int)item.OccurrenceDay;
-                        //add first event
-                        events.Add(createEvent(startDate, item));
-                        //add remaining events no further than scope
-                        do
+                        DateTime startDate = getNextWeekday(DateTime.Now, daysToAdd);
+                        for (int i = 0; i < BudgetScope; i += 14)
                         {
-                            events.Add(createEvent(startDate.AddDays(daysToAdd + 7), item));
-                            daysToAdd += 14;
-                        } while (daysToAdd < BudgetScope);
+                            events.Add(createEvent(startDate.AddDays(i), item));
+                        }
                     }
                     else
                     {
@@ -73,14 +65,14 @@ namespace ssb_api.Services
                     break;
             }
             _context.BudgetEvents.AddRange(events);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
         private BudgetEvent createEvent(DateTime date, BudgetItem item)
         {
             BudgetEvent newEvent = new BudgetEvent()
             {
-                ItemId = item.Id,
+                ItemId = item.ItemId,
                 Name = item.Name,
                 Description = item.Description,
                 Date = date,

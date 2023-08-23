@@ -7,7 +7,9 @@ namespace ssb_api.Models
     public class BudgetItem
     {
         public BudgetItem() => Events = new HashSet<BudgetEvent>();
-        public int Id { get; set; }
+
+        [Key]
+        public int ItemId { get; set; }
 
         [Required(ErrorMessage = "Please enter a name for the budget item.")]
         public string Name { get; set; } = string.Empty;
@@ -23,7 +25,6 @@ namespace ssb_api.Models
         [Precision(18,2)]
         public decimal Amount { get; set; } = 0;
 
-        [InverseProperty("BudgetItem")]
         public ICollection<BudgetEvent> Events { get; set;}
     }
 

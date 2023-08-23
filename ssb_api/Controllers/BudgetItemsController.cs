@@ -15,10 +15,12 @@ namespace ssb_api.Controllers
     public class BudgetItemsController : ControllerBase
     {
         private readonly BudgetContext _context;
+        private readonly EventService _eventService;
 
         public BudgetItemsController(BudgetContext context, EventService eventService)
         {
             _context = context;
+            _eventService = eventService;
         }
 
         // GET: api/BudgetItems
@@ -55,7 +57,7 @@ namespace ssb_api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBudgetItem(int id, BudgetItem budgetItem)
         {
-            if (id != budgetItem.Id)
+            if (id != budgetItem.ItemId)
             {
                 return BadRequest();
             }
@@ -95,8 +97,22 @@ namespace ssb_api.Controllers
             _context.BudgetItems.Add(budgetItem);
             //changes made to db context are saved to the database
             await _context.SaveChangesAsync();
+            //if budget item exists, create events for it
+            if (BudgetItemExists(budgetItem.ItemId))
+            {
+                await _eventService.genereateAsync(budgetItem);
+                if (BudgetEventExists(budgetItem.ItemId))
+                {
+                    //log error and do something if no new events were created
+                    //even occurrence.never will create one event
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
             //returns newly created item
-            return CreatedAtAction(nameof(GetBudgetItem), new { id = budgetItem.Id }, budgetItem);
+            return CreatedAtAction(nameof(GetBudgetItem), new { id = budgetItem.ItemId }, budgetItem);
         }
 
         // DELETE: api/BudgetItems/5
@@ -121,7 +137,12 @@ namespace ssb_api.Controllers
 
         private bool BudgetItemExists(int id)
         {
-            return (_context.BudgetItems?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.BudgetItems?.Any(e => e.ItemId == id)).GetValueOrDefault();
+        }
+
+        private bool BudgetEventExists(int id)
+        {
+            return (_context.BudgetEvents?.Any(e => e.ItemId == id)).GetValueOrDefault();
         }
     }
 }

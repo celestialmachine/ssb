@@ -8,12 +8,11 @@ namespace ssb_api.Models
 {
     public class BudgetEvent
     {
-        public int Id { get; set; }
+        [Key]
+        public int EventId { get; set; }
 
         public int ItemId { get; set; }
 
-        [ForeignKey("ItemId")]
-        [InverseProperty("Events")]
         public BudgetItem? BudgetItem { get; set; } = null!;
 
         [Required(ErrorMessage = "Please enter a name for the budget item.")]

@@ -76,7 +76,7 @@ namespace ssb_api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBudgetEvent(int id, BudgetEvent budgetEvent)
         {
-            if (id != budgetEvent.Id)
+            if (id != budgetEvent.EventId)
             {
                 return BadRequest();
             }
@@ -114,7 +114,7 @@ namespace ssb_api.Controllers
             _context.BudgetEvents.Add(budgetEvent);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBudgetEvent", new { id = budgetEvent.Id }, budgetEvent);
+            return CreatedAtAction("GetBudgetEvent", new { id = budgetEvent.EventId }, budgetEvent);
         }
 
         // DELETE: api/BudgetEvents/5
@@ -139,7 +139,7 @@ namespace ssb_api.Controllers
 
         private bool BudgetEventExists(int id)
         {
-            return (_context.BudgetEvents?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.BudgetEvents?.Any(e => e.EventId == id)).GetValueOrDefault();
         }
     }
 }
