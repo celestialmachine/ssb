@@ -23,8 +23,16 @@ namespace ssb_api.Services
                     break;
                 case occurrence.Monthly:
                     //add event for current month plus next month
-                    events.Add(createEvent(DateTime.Now, item));
-                    events.Add(createEvent(DateTime.Now.AddMonths(1), item));
+                    if(item.OccurrenceDay != null)
+                    {
+                        events.Add(createEvent(getNextCalendarDay((int)item.OccurrenceDay), item));
+                        events.Add(createEvent(getNextCalendarDay((int)item.OccurrenceDay).AddMonths(1), item));
+                    }
+                    else
+                    {
+                        //TODO handle error
+                        break;
+                    }
                     break;
                 case occurrence.Weekly:
                     //add event for current week plus 60 days
@@ -39,12 +47,12 @@ namespace ssb_api.Services
                     }
                     else
                     {
-                        //TODO return or log an error
+                        //TODO handle error
                         break;
                     }
                     break;
                 case occurrence.BiWeekly:
-                    //add event for current week plus 60 days
+                    //add event for current week plus 60 days, biweekly
                     if (item.OccurrenceDay != null)
                     {
                         int daysToAdd = (int)item.OccurrenceDay;
@@ -56,12 +64,12 @@ namespace ssb_api.Services
                     }
                     else
                     {
-                        //TODO return or log an error
+                        //TODO handle error
                         break;
                     }
                     break;
                 default:
-                    //TODO return or log an error
+                    //TODO return or log error
                     break;
             }
             _context.BudgetEvents.AddRange(events);
@@ -82,6 +90,38 @@ namespace ssb_api.Services
                 Note = ""
             };
             return newEvent;
+        }
+
+        private DateTime getNextCalendarDay(int day)
+        {
+            //check if day is present or future in current month
+            if(day >= DateTime.Now.Day)
+            {
+                //return current month, replace day with day
+                try
+                {
+                    return new DateTime(DateTime.Now.Year, DateTime.Now.Month, day);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    //return last day of month
+                    return new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+                }
+            }
+            else
+            {
+                //Return next month, replace day with day
+                try
+                {
+                    return new DateTime(DateTime.Now.Year, DateTime.Now.Month + 1, day);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    //return last day of month
+                    //TODO fix issue with not returning correct last day based on occurrence, might have to change parameter
+                    return new DateTime(DateTime.Now.Year, DateTime.Now.Month + 1, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month + 1));
+                }
+            }
         }
 
         private DateTime getNextWeekday(DateTime date, int day)
